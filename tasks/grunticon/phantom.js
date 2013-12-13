@@ -21,8 +21,10 @@ var clog = function(what){
 	console.log("[32m[phantom.js][39m "+what);
 }
 
+var debugMode = phantom.args[0] == '--debug=true';
+
 var vlog = function(what){
-	if(phantom.args[0] == '--debug=true'){
+	if(debugMode){
 		clog(what);
 	}
 }
@@ -41,10 +43,27 @@ var crunchSVG = function(fileObj){
 		height: 1
 	};
 
+	// Copied from https://github.com/ariya/phantomjs/wiki/API-Reference-WebPage#onerror
+	page.onError = function(msg, trace){
+		var msgStack = ['ERROR: ' + msg];
+		if (trace && trace.length) {
+			msgStack.push('TRACE:');
+			trace.forEach(function(t) {
+				msgStack.push(' -> ' + t.file + ': ' + t.line + (t.function ? ' (in function "' + t.function + '")' : ''));
+			});
+		}
+		console.error(msgStack.join('\n'));
+	}
+
+	page.onResourceError = function(rsrc){
+		clog('RESOURCE ERROR '+rsrc.errorCode+': '+rsrc.errorString);
+	};
+
 	// DO IT
 	page.open(fileObj.src, function(status){
-		vlog('Generated "'+fileObj.temp+'"');
+		vlog('Generating "'+fileObj.temp+'"');
 		if(status !== 'success'){
+			vlog('Error with '+fileObj.temp+': '+status);
 			promise.reject();
 		} else {
 			page.render(fileObj.temp);
@@ -62,5 +81,9 @@ for(var f in files){
 
 // Kill phantom once promises are fulfilled
 RSVP.all(promises).then(function(){
+	vlog('Exit with success');
+	phantom.exit();
+}, function(){
+	vlog('Exit with failure');
 	phantom.exit();
 });

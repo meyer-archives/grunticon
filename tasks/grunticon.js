@@ -442,23 +442,11 @@ module.exports = function(grunt, undefined) {
 				};
 				grunt.verbose.or.ok('Done!');
 
-				sep('Writing HTML/CSS files');
-				var snippetTemplate = grunt.file.read(options.snippetTemplate);
-				var loaderJS = uglify.minify(options.loaderTemplate).code;
+
+				sep('Writing CSS files');
+
 				var dataCSS = grunt.file.read(options.cssDataTemplate);
 				var fileCSS = grunt.file.read(options.cssFileTemplate);
-
-				// Production Grunticon snippet
-				var snippetFile = grunt.template.process(snippetTemplate, {
-					data: {
-						loader: loaderJS,
-						svgDataPath: path.join(options.cssBasePath, options.svgDataCSS),
-						pngDataPath: path.join(options.cssBasePath, options.pngDataCSS),
-						pngFilePath: path.join(options.cssBasePath, options.pngFileCSS)
-					}
-				});
-
-				grunt.file.write(path.join(options.dest, options.snippetFile), snippetFile);
 
 				// Grunticon CSS
 				var pngFileCSS = grunt.template.process(fileCSS, {data: {
@@ -474,6 +462,32 @@ module.exports = function(grunt, undefined) {
 				grunt.file.write(path.join(options.dest, options.pngFileCSS), pngFileCSS);
 				grunt.file.write(path.join(options.dest, options.pngDataCSS), pngDataCSS);
 				grunt.file.write(path.join(options.dest, options.svgDataCSS), svgDataCSS);
+
+				grunt.verbose.or.ok('Done!');
+
+
+				// Snippet file (optional)
+				if(options.snippetFile !== false){
+					sep('Writing snippet HTML file');
+					var snippetTemplate = grunt.file.read(options.snippetTemplate);
+					var loaderJS = uglify.minify(options.loaderTemplate).code;
+
+					var snippetFile = grunt.template.process(snippetTemplate, {
+						data: {
+							loader: loaderJS,
+							svgDataPath: path.join(options.cssBasePath, options.svgDataCSS),
+							pngDataPath: path.join(options.cssBasePath, options.pngDataCSS),
+							pngFilePath: path.join(options.cssBasePath, options.pngFileCSS)
+						}
+					});
+
+					grunt.file.write(path.join(options.dest, options.snippetFile), snippetFile);
+
+				} else {
+					sep('Skipping snippet HTML file');
+				}
+				grunt.verbose.or.ok('Done!');
+
 
 				// Preview HTML file (optional)
 				if(options.previewFile !== false){

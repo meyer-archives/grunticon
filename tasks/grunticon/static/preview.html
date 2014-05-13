@@ -6,15 +6,20 @@
 <%= snippet %>
 
 <style type="text/css" media="screen">
+	body{
+		/* Grey grid background */
+		background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAIElEQVQYV2NkYGCQBGJ0IIUuwDhEFBpj8cwzbJ4Z7AoBdm0Ghz/C7UYAAAAASUVORK5CYII=');
+		background-repeat: repeat;
+	}
 
 	*{
 		background-repeat: no-repeat;
 		background-position: center center;
 	}
-<% cssFiles.forEach(function(file){ %>
-	.<%= file.selector %>{
-		width: <%= file.width %>px;
-		height: <%= file.height %>px;
+<% icons.forEach(function(icon){ %>
+	.<%= icon.selector %>{
+		width: <%= icon.size.w %>px;
+		height: <%= icon.size.h %>px;
 	}
 <% }); %>
 </style>
@@ -22,10 +27,10 @@
 </head>
 <body>
 <ul>
-<% cssFiles.forEach(function(file){ %>
+<% icons.forEach(function(icon){ %>
 	<li>
-		<pre><code>.<%= file.selector %></code></pre>
-		<div class="<%= file.selector %>"></div>
+		<pre><code>.<%= icon.selector %></code></pre>
+		<div class="<%= icon.selector %>"></div>
 		<hr>
 	</li>
 <% }); %>

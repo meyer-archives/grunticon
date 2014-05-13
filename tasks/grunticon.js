@@ -383,7 +383,6 @@ module.exports = function(grunt, undefined) {
 				var pngFileRules = [];
 				var pngDataRules = [];
 				var svgDataRules = [];
-				var cssFiles = [];
 
 				var svgHeader = "data:image/svg+xml;charset=US-ASCII,";
 				var pngHeader = "data:image/png;base64,";
@@ -433,12 +432,6 @@ module.exports = function(grunt, undefined) {
 					var sel = options.cssPrefix + f.basename;
 					sel = sel.replace(/[^\w]+/gmi, '-').toLowerCase();
 
-					cssFiles.push({
-						width: width,
-						height: height,
-						selector: sel
-					});
-
 					grunt.verbose.ok( grunt.log.table([5,11,64],[idx+'.', width+'x'+height+'px','.'+sel]) );
 
 					// CSS Files
@@ -482,8 +475,9 @@ module.exports = function(grunt, undefined) {
 				grunt.file.write(path.join(options.dest, options.pngDataCSS), pngDataCSS);
 				grunt.file.write(path.join(options.dest, options.svgDataCSS), svgDataCSS);
 
-				// Preview HTML file
+				// Preview HTML file (optional)
 				if(options.previewFile !== false){
+					sep('Writing preview HTML file');
 					var previewTemplate = grunt.file.read(options.previewTemplate);
 					var previewSnippet = grunt.template.process(snippetTemplate, {
 						data: {
@@ -497,15 +491,17 @@ module.exports = function(grunt, undefined) {
 					var previewFile = grunt.template.process(previewTemplate, {
 						data: {
 							snippet: previewSnippet,
-							cssFiles: cssFiles
+							icons: svgDataRules
 						}
 					});
 
 					grunt.file.write(path.join(options.dest, options.previewFile), previewFile);
+				} else {
+					sep('Skipping preview HTML file');
 				}
+				grunt.verbose.or.ok('Done!');
 
 				p.resolve();
-				grunt.verbose.or.ok('Done!');
 			}
 
 			return p;

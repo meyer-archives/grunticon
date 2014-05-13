@@ -374,7 +374,7 @@ module.exports = function(grunt, undefined) {
 		}
 
 		var buildCSS = function(){
-			sep('Building HTML/CSS files');
+			sep('Building CSS rules');
 			var p = new RSVP.Promise();
 
 			if(pngCount + svgCount === 0){
@@ -533,8 +533,7 @@ module.exports = function(grunt, undefined) {
 		}
 
 		var declareVictory = function(){
-			sep('Success!!');
-			grunt.log.writeln("\n"+grunt.file.read(mascotPath));
+			grunt.verbose.writeln("\n"+grunt.file.read(mascotPath));
 			done();
 		}
 
